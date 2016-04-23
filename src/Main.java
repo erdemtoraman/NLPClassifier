@@ -12,14 +12,10 @@ public class Main {
     public static HashMap<String, ArrayList<Document>> categoriesToDocs = new HashMap<>();
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-        readFiles();
-        calculateAndAssigntfidf();
-        serialize();
-        findClassDocuments();
-        Rocchio.calculateAllCentroids();
-        HashMap<String, HashMap<String, Double>> temp = Rocchio.categoriesCentroids;
-        System.out.println();
+        deserialize();
+
     }
+
     public static void serialize() throws IOException {
         FileOutputStream fileOut = new FileOutputStream("tf-idf.ser");
         ObjectOutputStream out = new ObjectOutputStream(fileOut);
@@ -31,7 +27,13 @@ public class Main {
         out.writeObject(Rocchio.categoriesCentroids);
         out.close();
         fileOut.close();
+        fileOut = new FileOutputStream("vocabulary.ser");
+        out = new ObjectOutputStream(fileOut);
+        out.writeObject(vocabulary);
+        out.close();
+        fileOut.close();
     }
+
     public static void deserialize() throws IOException, ClassNotFoundException {
         FileInputStream fileIn = new FileInputStream("tf-idf.ser");
         ObjectInputStream in = new ObjectInputStream(fileIn);
@@ -43,8 +45,14 @@ public class Main {
         Rocchio.categoriesCentroids = (HashMap<String, HashMap<String, Double>>) in.readObject();
         in.close();
         fileIn.close();
+        fileIn = new FileInputStream("vocabulary.ser");
+        in = new ObjectInputStream(fileIn);
+        vocabulary = (HashMap<String, Double>) in.readObject();
+        in.close();
+        fileIn.close();
     }
-    public static void findClassDocuments(){
+
+    public static void findClassDocuments() {
         for (int id : documents.keySet()) {
             Document current = documents.get(id);
             for (String category : current.getCategories()) {
@@ -57,8 +65,9 @@ public class Main {
                 }
             }
         }
-        int x =6;
+        int x = 6;
     }
+
     public static void readFiles() throws IOException {
         BufferedReader read = new BufferedReader(new FileReader(new File("REUTERS_training_data.dat")));
         String str;
@@ -97,7 +106,7 @@ public class Main {
         read = new BufferedReader(new FileReader(new File("REUTERS_categories.dat")));
         while ((str = read.readLine()) != null) {
             String[] line = str.split(" ");
-            if (documents.get(Integer.parseInt(line[1])) != null ) {
+            if (documents.get(Integer.parseInt(line[1])) != null) {
                 documents.get(Integer.parseInt(line[1])).getCategories().add(line[0]);
             }
         }
