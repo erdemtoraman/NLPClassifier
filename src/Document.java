@@ -1,4 +1,5 @@
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -7,18 +8,19 @@ import java.util.HashMap;
 public class Document implements Serializable {
     int id;
     HashMap<String, Double> tfidfVector;
-    String category;
+    ArrayList<String> categories;
 
     public Document(int id, HashMap<String, Double> tfidfVector) {
         this.id = id;
         this.tfidfVector = tfidfVector;
+        this.categories = new ArrayList<>();
     }
 
     @Override
     public String toString() {
         return "id=" + id +
                 ", tfidfVector = " + tfidfVector +
-                ", category='" + category + '\'' +
+                ", categories='" + categories.toString() + '\'' +
                 '}';
     }
 
@@ -38,11 +40,11 @@ public class Document implements Serializable {
         this.tfidfVector = tfidfVector;
     }
 
-    public String getCategory() {
-        return category;
+    public ArrayList<String> getCategories() {
+        return categories;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setCategories(ArrayList<String> categories) {
+        this.categories = categories;
     }
 }

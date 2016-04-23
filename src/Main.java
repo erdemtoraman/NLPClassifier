@@ -13,20 +13,31 @@ public class Main {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         readFiles();
-        //calculateAndAssigntfidf();
-        //  deserialize();
+        calculateAndAssigntfidf();
+        serialize();
         findClassDocuments();
+        Rocchio.calculateAllCentroids();
         HashMap<String, HashMap<String, Double>> temp = Rocchio.categoriesCentroids;
         System.out.println();
     }
-
+    public static void serialize() throws IOException {
+        FileOutputStream fileOut = new FileOutputStream("tf-idf.ser");
+        ObjectOutputStream out = new ObjectOutputStream(fileOut);
+        out.writeObject(documents);
+        out.close();
+        fileOut.close();
+        fileOut = new FileOutputStream("categories-centroids.ser");
+        out = new ObjectOutputStream(fileOut);
+        out.writeObject(Rocchio.categoriesCentroids);
+        out.close();
+        fileOut.close();
+    }
     public static void deserialize() throws IOException, ClassNotFoundException {
         FileInputStream fileIn = new FileInputStream("tf-idf.ser");
         ObjectInputStream in = new ObjectInputStream(fileIn);
         documents = (HashMap<Integer, Document>) in.readObject();
         in.close();
         fileIn.close();
-
         fileIn = new FileInputStream("categories-centroids.ser");
         in = new ObjectInputStream(fileIn);
         Rocchio.categoriesCentroids = (HashMap<String, HashMap<String, Double>>) in.readObject();
@@ -34,17 +45,16 @@ public class Main {
         fileIn.close();
     }
     public static void findClassDocuments(){
-        HashSet<String> h = new HashSet<>();
         for (int id : documents.keySet()) {
             Document current = documents.get(id);
-            System.out.println();
-            h.add(current.getCategory());
-            if(!categoriesToDocs.keySet().contains(current.getCategory())) {
-                ArrayList<Document> temp = new ArrayList<>();
-                temp.add(current);
-                categoriesToDocs.put(current.getCategory(), temp);
-            } else {
-                categoriesToDocs.get(current.getCategory()).add(current);
+            for (String category : current.getCategories()) {
+                if (!categoriesToDocs.keySet().contains(category)) {
+                    ArrayList<Document> temp = new ArrayList<>();
+                    temp.add(current);
+                    categoriesToDocs.put(category, temp);
+                } else {
+                    categoriesToDocs.get(category).add(current);
+                }
             }
         }
         int x =6;
@@ -85,13 +95,10 @@ public class Main {
 
         }
         read = new BufferedReader(new FileReader(new File("REUTERS_categories.dat")));
-        HashSet<String> h = new HashSet<>();
         while ((str = read.readLine()) != null) {
             String[] line = str.split(" ");
             if (documents.get(Integer.parseInt(line[1])) != null ) {
-                documents.get(Integer.parseInt(line[1])).setCategory(line[0]);
-                System.out.println(line[0] + " " + line[1]);
-                h.add(line[0]);
+                documents.get(Integer.parseInt(line[1])).getCategories().add(line[0]);
             }
         }
         read.close();
