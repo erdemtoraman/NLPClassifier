@@ -1,8 +1,7 @@
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Timer;
-
+import java.util.HashSet;
 
 /**
  * Created by Atakan Arıkan on 23.04.2016.
@@ -10,31 +9,55 @@ import java.util.Timer;
 public class Main {
     public static HashMap<Integer, Document> documents = new HashMap<>();
     public static HashMap<String, Double> vocabulary = new HashMap<>();
+    public static HashMap<String, ArrayList<Document>> categoriesToDocs = new HashMap<>();
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         readFiles();
-        deserialize();
-
-
+        //calculateAndAssigntfidf();
+        //  deserialize();
+        findClassDocuments();
+        HashMap<String, HashMap<String, Double>> temp = Rocchio.categoriesCentroids;
+        System.out.println();
     }
-public static void deserialize() throws IOException, ClassNotFoundException {
-    FileInputStream fileIn = new FileInputStream("tf-idf.ser");
-    ObjectInputStream in = new ObjectInputStream(fileIn);
-    documents = (HashMap<Integer, Document>) in.readObject();
-    in.close();
-    fileIn.close();
-}
+
+    public static void deserialize() throws IOException, ClassNotFoundException {
+        FileInputStream fileIn = new FileInputStream("tf-idf.ser");
+        ObjectInputStream in = new ObjectInputStream(fileIn);
+        documents = (HashMap<Integer, Document>) in.readObject();
+        in.close();
+        fileIn.close();
+
+        fileIn = new FileInputStream("categories-centroids.ser");
+        in = new ObjectInputStream(fileIn);
+        Rocchio.categoriesCentroids = (HashMap<String, HashMap<String, Double>>) in.readObject();
+        in.close();
+        fileIn.close();
+    }
+    public static void findClassDocuments(){
+        HashSet<String> h = new HashSet<>();
+        for (int id : documents.keySet()) {
+            Document current = documents.get(id);
+            System.out.println();
+            h.add(current.getCategory());
+            if(!categoriesToDocs.keySet().contains(current.getCategory())) {
+                ArrayList<Document> temp = new ArrayList<>();
+                temp.add(current);
+                categoriesToDocs.put(current.getCategory(), temp);
+            } else {
+                categoriesToDocs.get(current.getCategory()).add(current);
+            }
+        }
+        int x =6;
+    }
     public static void readFiles() throws IOException {
         BufferedReader read = new BufferedReader(new FileReader(new File("REUTERS_training_data.dat")));
         String str;
         int currentDocId = 0;
-        boolean isConsidered;
         HashMap<String, Double> currentTf = new HashMap<>();
         while ((str = read.readLine()) != null) {
             if (str.startsWith(".I ")) {
                 currentDocId = Integer.parseInt(str.substring(str.indexOf(" ") + 1));
                 currentTf = new HashMap<>();
-                isConsidered = false;
                 str = read.readLine();
                 str = read.readLine();
             }
@@ -47,7 +70,8 @@ public static void deserialize() throws IOException, ClassNotFoundException {
                         vocabulary.put(w, 1.0);
                     }
                 }
-                //  documents.put(currentDocId, new Document(currentDocId, currentTf));
+
+                documents.put(currentDocId, new Document(currentDocId, currentTf));
             } else {
                 String[] words = str.split(" ");
                 for (String w : words) {
@@ -61,10 +85,13 @@ public static void deserialize() throws IOException, ClassNotFoundException {
 
         }
         read = new BufferedReader(new FileReader(new File("REUTERS_categories.dat")));
+        HashSet<String> h = new HashSet<>();
         while ((str = read.readLine()) != null) {
             String[] line = str.split(" ");
-            if (documents.get(Integer.parseInt(line[1])) != null) {
+            if (documents.get(Integer.parseInt(line[1])) != null ) {
                 documents.get(Integer.parseInt(line[1])).setCategory(line[0]);
+                System.out.println(line[0] + " " + line[1]);
+                h.add(line[0]);
             }
         }
         read.close();
