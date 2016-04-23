@@ -1,9 +1,10 @@
+import java.io.Serializable;
 import java.util.HashMap;
 
 /**
  * Created by Atakan Arıkan on 23.04.2016.
  */
-public class Document {
+public class Document implements Serializable {
     int id;
     HashMap<String, Double> tfidfVector;
     String category;
@@ -11,6 +12,14 @@ public class Document {
     public Document(int id, HashMap<String, Double> tfidfVector) {
         this.id = id;
         this.tfidfVector = tfidfVector;
+    }
+
+    @Override
+    public String toString() {
+        return "id=" + id +
+                ", tfidfVector = " + tfidfVector +
+                ", category='" + category + '\'' +
+                '}';
     }
 
     public int getId() {

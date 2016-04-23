@@ -1,7 +1,4 @@
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
 
 
@@ -11,10 +8,13 @@ import java.util.HashMap;
 public class Main {
     public static HashMap<Integer, Document> documents = new HashMap<>();
     public static HashMap<String, Double> vocabulary = new HashMap<>();
-    public static void main(String[] args) throws IOException {
-        readFiles();
-        calculateAndAssigntfidf();
-        System.out.println();
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
+        FileInputStream fileIn = new FileInputStream("tf-idf.ser");
+        ObjectInputStream in = new ObjectInputStream(fileIn);
+        documents = (HashMap<Integer, Document>) in.readObject();
+        in.close();
+        fileIn.close();
+
     }
     public static void readFiles() throws IOException {
         BufferedReader read = new BufferedReader(new FileReader(new File("REUTERS_training_data.dat")));
@@ -71,8 +71,6 @@ public class Main {
                 if (current.getTfidfVector().get(word) != null){
                     double tf = current.getTfidfVector().get(word);
                     current.getTfidfVector().put(word, tf*idf);
-                } else {
-                    current.getTfidfVector().put(word, 0.0);
                 }
             }
         }
