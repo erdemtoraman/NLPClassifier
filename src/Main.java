@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.HashMap;
+import java.util.Iterator;
 
 
 /**
@@ -14,7 +15,8 @@ public class Main {
         documents = (HashMap<Integer, Document>) in.readObject();
         in.close();
         fileIn.close();
-
+        System.out.println(cosineSimilarity(documents.get(2288).getTfidfVector(), documents.get(2288).getTfidfVector()));
+        System.out.println(cosineSimilarity(documents.get(2288).getTfidfVector(), documents.get(2289).getTfidfVector()));
     }
     public static void readFiles() throws IOException {
         BufferedReader read = new BufferedReader(new FileReader(new File("REUTERS_training_data.dat")));
@@ -61,6 +63,25 @@ public class Main {
             }
         }
         read.close();
+    }
+    public static double cosineSimilarity(HashMap<String, Double> list1, HashMap<String, Double> list2){
+        Iterator itr1 = list1.keySet().iterator();
+        Iterator itr2 = list2.keySet().iterator();
+        double dividend = 0;
+        double lengthList1 = 0;
+        double lengthList2 = 0;
+        while(itr1.hasNext()){ // since their sizes are equal we dont have to check twice
+            String w1 = itr1.next().toString();
+            String w2 = itr2.next().toString();
+            double elem1 = list1.get(w1);
+            double elem2 = list2.get(w2);
+            if (list2.get(w2) != null){
+                dividend += elem1 * elem2;
+                lengthList1 += elem2 * elem2;
+                lengthList2 += elem1 * elem1;
+            }
+        }
+        return dividend/(Math.sqrt(lengthList1)*Math.sqrt(lengthList2));
     }
 
     public static void calculateAndAssigntfidf(){
