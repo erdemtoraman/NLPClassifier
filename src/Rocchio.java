@@ -8,13 +8,13 @@ public class Rocchio {
 
     public static HashMap<Integer, Document> documents = Main.documents;
     public static HashMap<String, Double> vocabulary = Main.vocabulary;
-    public static HashMap<String, ArrayList<Document>> categoriesToDocs  = Main.categoriesToDocs;
+    public static HashMap<String, ArrayList<Document>> categoriesToDocs = Main.categoriesToDocs;
     public static HashMap<String, HashMap<String, Double>> categoriesCentroids = new HashMap<>();
 
-    public static String test(HashMap<String, Double> testDoc){
+    public static String test(HashMap<String, Double> testDoc) {
         double max = 0;
         String winner = "";
-        for (String category: categoriesCentroids.keySet()) {
+        for (String category : categoriesCentroids.keySet()) {
             double result = cosineSimilarity(testDoc, categoriesCentroids.get(category));
             if (result > max) {
                 max = result;
@@ -25,38 +25,45 @@ public class Rocchio {
     }
 
     public static void calculateAllCentroids() {
-        for (String category: categoriesToDocs.keySet()) {
+        for (String category : categoriesToDocs.keySet()) {
             categoriesCentroids.put(category, calculateCentroid(category));
         }
     }
+
     public static HashMap<String, Double> calculateCentroid(String category) {
         HashMap<String, Double> centroid = new HashMap<>();
         ArrayList<Document> docs = categoriesToDocs.get(category);
         for (String key : vocabulary.keySet()) {
             double total = 0;
             for (Document d : docs) {
-                if(d.getTfidfVector().containsKey(key)) {
-                    total+= d.getTfidfVector().get(key);
+                if (d.getTfidfVector().containsKey(key)) {
+                    total += d.getTfidfVector().get(key);
                 }
             }
-            if (total != 0){
-                centroid.put(key, total/(double)docs.size());
+            if (total != 0) {
+                centroid.put(key, total / (double) docs.size());
             }
         }
         return centroid;
     }
+
     public static double cosineSimilarity(HashMap<String, Double> list1, HashMap<String, Double> list2) {
         double dividend = 0;
         double lengthList1 = 0;
         double lengthList2 = 0;
         for (String word : vocabulary.keySet()) {
-            if (list1.containsKey(word) && list2.containsKey(word)) {
-                double elem1 = list1.get(word);
-                double elem2 = list2.get(word);
-                dividend += elem1 * elem2;
-                lengthList1 += elem2 * elem2;
-                lengthList2 += elem1 * elem1;
+            double elem1 = 0;
+            double elem2 = 0;
+            if (list1.containsKey(word)) {
+                elem1 = list1.get(word);
             }
+            if (list2.containsKey(word)) {
+                elem2 = list2.get(word);
+            }
+            dividend += elem1 * elem2;
+            lengthList1 += elem2 * elem2;
+            lengthList2 += elem1 * elem1;
+
         }
 
         return dividend / (Math.sqrt(lengthList1) * Math.sqrt(lengthList2));
