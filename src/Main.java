@@ -1,7 +1,6 @@
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 
 /**
  * Created by Atakan Arıkan on 23.04.2016.
@@ -13,11 +12,30 @@ public class Main {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         deserialize();
-        System.out.println();
-        Rocchio.doSomething();
-
+        int total = 0;
+        int win = 0;
+        for (int id : documents.keySet()) {
+            total++;
+            Document current = documents.get(id);
+            String winner = Knn.test(current);
+            if (current.getCategories().contains(winner)) {
+                win++;
+            }
+            System.out.println(winner + " - " + current.getCategories().toString());
+            if (total == 250) {
+                System.out.println((double)win/(double)total);
+                System.out.println();
+            }
+        }
     }
 
+    public static void serializeAll() throws IOException {
+        readFiles();
+        calculateAndAssigntfidf();
+        findClassDocuments();
+        Rocchio.calculateAllCentroids();
+        serialize();
+    }
     public static void serialize() throws IOException {
         FileOutputStream fileOut = new FileOutputStream("tf-idf.ser");
         ObjectOutputStream out = new ObjectOutputStream(fileOut);
@@ -42,14 +60,16 @@ public class Main {
         documents = (HashMap<Integer, Document>) in.readObject();
         in.close();
         fileIn.close();
+        /*
         fileIn = new FileInputStream("categories-centroids.ser");
         in = new ObjectInputStream(fileIn);
         Rocchio.categoriesCentroids = (HashMap<String, HashMap<String, Double>>) in.readObject();
         in.close();
         fileIn.close();
+        */
         fileIn = new FileInputStream("vocabulary.ser");
         in = new ObjectInputStream(fileIn);
-        Rocchio.vocabulary = (HashMap<String, Double>) in.readObject();
+        vocabulary = (HashMap<String, Double>) in.readObject();
         in.close();
         fileIn.close();
     }

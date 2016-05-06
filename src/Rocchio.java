@@ -11,6 +11,19 @@ public class Rocchio {
     public static HashMap<String, ArrayList<Document>> categoriesToDocs = Main.categoriesToDocs;
     public static HashMap<String, HashMap<String, Double>> categoriesCentroids = new HashMap<>();
 
+    public static String test(HashMap<String, Double> testDoc) {
+        double max = 0;
+        String winner = "";
+        for (String category : categoriesCentroids.keySet()) {
+            double result = cosineSimilarity(testDoc, categoriesCentroids.get(category));
+            if (result > max) {
+                max = result;
+                winner = category;
+            }
+        }
+        return winner;
+    }
+
     public static void calculateAllCentroids() {
         for (String category : categoriesToDocs.keySet()) {
             categoriesCentroids.put(category, calculateCentroid(category));
@@ -39,13 +52,18 @@ public class Rocchio {
         double lengthList1 = 0;
         double lengthList2 = 0;
         for (String word : vocabulary.keySet()) {
-            if (list1.containsKey(word) && list2.containsKey(word)) {
-                double elem1 = list1.get(word);
-                double elem2 = list2.get(word);
-                dividend += elem1 * elem2;
-                lengthList1 += elem2 * elem2;
-                lengthList2 += elem1 * elem1;
+            double elem1 = 0;
+            double elem2 = 0;
+            if (list1.containsKey(word)) {
+                elem1 = list1.get(word);
             }
+            if (list2.containsKey(word)) {
+                elem2 = list2.get(word);
+            }
+            dividend += elem1 * elem2;
+            lengthList1 += elem2 * elem2;
+            lengthList2 += elem1 * elem1;
+
         }
 
         return dividend / (Math.sqrt(lengthList1) * Math.sqrt(lengthList2));
