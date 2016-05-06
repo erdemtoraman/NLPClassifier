@@ -11,6 +11,19 @@ public class Rocchio {
     public static HashMap<String, ArrayList<Document>> categoriesToDocs  = Main.categoriesToDocs;
     public static HashMap<String, HashMap<String, Double>> categoriesCentroids = new HashMap<>();
 
+    public static String test(HashMap<String, Double> testDoc){
+        double max = 0;
+        String winner = "";
+        for (String category: categoriesCentroids.keySet()) {
+            double result = cosineSimilarity(testDoc, categoriesCentroids.get(category));
+            if (result > max) {
+                max = result;
+                winner = category;
+            }
+        }
+        return winner;
+    }
+
     public static void calculateAllCentroids() {
         for (String category: categoriesToDocs.keySet()) {
             categoriesCentroids.put(category, calculateCentroid(category));
