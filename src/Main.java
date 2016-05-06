@@ -13,6 +13,8 @@ public class Main {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         deserialize();
+        System.out.println();
+        Rocchio.doSomething();
 
     }
 
@@ -47,7 +49,7 @@ public class Main {
         fileIn.close();
         fileIn = new FileInputStream("vocabulary.ser");
         in = new ObjectInputStream(fileIn);
-        vocabulary = (HashMap<String, Double>) in.readObject();
+        Rocchio.vocabulary = (HashMap<String, Double>) in.readObject();
         in.close();
         fileIn.close();
     }
