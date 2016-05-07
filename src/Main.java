@@ -11,13 +11,17 @@ public class Main {
     public static HashMap<String, ArrayList<Document>> categoriesToDocs = new HashMap<>();
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
+       // serializeAll();
         deserialize();
+        System.out.println("Deserialize is over");
+        NaiveBayes.calculateTFIDFValuesOfAllCategories();
+        System.out.println("Bayes calculate is over");
         int total = 0;
         int win = 0;
         for (int id : documents.keySet()) {
             total++;
             Document current = documents.get(id);
-            String winner = Knn.test(current);
+            String winner = NaiveBayes.guess(current);
             if (current.getCategories().contains(winner)) {
                 win++;
             }
@@ -33,7 +37,7 @@ public class Main {
         readFiles();
         calculateAndAssigntfidf();
         findClassDocuments();
-        Rocchio.calculateAllCentroids();
+        //Rocchio.calculateAllCentroids();
         serialize();
     }
     public static void serialize() throws IOException {
@@ -52,6 +56,11 @@ public class Main {
         out.writeObject(vocabulary);
         out.close();
         fileOut.close();
+        fileOut = new FileOutputStream("categories-docs.ser");
+        out = new ObjectOutputStream(fileOut);
+        out.writeObject(categoriesToDocs);
+        out.close();
+        fileOut.close();
     }
 
     public static void deserialize() throws IOException, ClassNotFoundException {
@@ -60,18 +69,22 @@ public class Main {
         documents = (HashMap<Integer, Document>) in.readObject();
         in.close();
         fileIn.close();
-        /*
         fileIn = new FileInputStream("categories-centroids.ser");
         in = new ObjectInputStream(fileIn);
         Rocchio.categoriesCentroids = (HashMap<String, HashMap<String, Double>>) in.readObject();
         in.close();
         fileIn.close();
-        */
         fileIn = new FileInputStream("vocabulary.ser");
         in = new ObjectInputStream(fileIn);
         vocabulary = (HashMap<String, Double>) in.readObject();
         in.close();
         fileIn.close();
+        fileIn = new FileInputStream("categories-docs.ser");
+        in = new ObjectInputStream(fileIn);
+        categoriesToDocs = (HashMap<String, ArrayList<Document>>) in.readObject();
+        in.close();
+        fileIn.close();
+
     }
 
     public static void findClassDocuments() {
