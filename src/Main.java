@@ -11,23 +11,27 @@ public class Main {
     public static HashMap<String, ArrayList<Document>> categoriesToDocs = new HashMap<>();
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-     serializeAll();
+      // serializeAll();
         deserialize();
+        Neural_Network.neuralNetwork.clear();
         System.out.println("Deserialize is over");
-    //    NaiveBayes.calculateTFIDFValuesOfAllCategories();
-      //  System.out.println("Bayes calculate is over");
+        Neural_Network.train();
+        serializeAll();
+
+        //    NaiveBayes.calculateTFIDFValuesOfAllCategories();
+        //  System.out.println("Bayes calculate is over");
         int total = 0;
         int win = 0;
         for (int id : documents.keySet()) {
             total++;
             Document current = documents.get(id);
-            String winner = NaiveBayes.guess(current);
+            String winner = Neural_Network.guess(current);
             if (current.getCategories().contains(winner)) {
                 win++;
             }
             System.out.println(winner + " - " + current.getCategories().toString() + "=" + win + "/" + total);
         }
-        System.out.println((double)win/(double)total);
+        System.out.println((double) win / (double) total);
         System.out.println();
     }
 
@@ -35,15 +39,17 @@ public class Main {
         readFiles();
         System.out.println("a");
         calculateAndAssigntfidf();
-        System.out.println("a");
+        System.out.println("b");
         findClassDocuments();
-        System.out.println("a");
-        NaiveBayes.calculateTFIDFValuesOfAllCategories();
-        System.out.println("a");
+        System.out.println("c");
+        // NaiveBayes.calculateTFIDFValuesOfAllCategories();
         //Rocchio.calculateAllCentroids();
-        System.out.println("a");
+      //  Neural_Network.train();
+        System.out.println("d");
         serialize();
+
     }
+
     public static void serialize() throws IOException {
         FileOutputStream fileOut = new FileOutputStream("tf-idf.ser");
         ObjectOutputStream out = new ObjectOutputStream(fileOut);
@@ -73,6 +79,11 @@ public class Main {
         fileOut = new FileOutputStream("totalNumberOfWords.ser");
         out = new ObjectOutputStream(fileOut);
         out.writeObject(NaiveBayes.totalNumberOfWords);
+        out.close();
+        fileOut.close();
+        fileOut = new FileOutputStream("neural-network.ser");
+        out = new ObjectOutputStream(fileOut);
+        out.writeObject(Neural_Network.neuralNetwork);
         out.close();
         fileOut.close();
     }
@@ -106,6 +117,11 @@ public class Main {
         fileIn = new FileInputStream("totalNumberOfWords.ser");
         in = new ObjectInputStream(fileIn);
         NaiveBayes.totalNumberOfWords = (HashMap<String, Double>) in.readObject();
+        in.close();
+        fileIn.close();
+        fileIn = new FileInputStream("neural-network.ser");
+        in = new ObjectInputStream(fileIn);
+        Neural_Network.neuralNetwork = (HashMap<String, HashMap<String, Double>>) in.readObject();
         in.close();
         fileIn.close();
 
