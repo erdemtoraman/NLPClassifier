@@ -11,7 +11,7 @@ public class Main {
     public static HashMap<String, ArrayList<Document>> categoriesToDocs = new HashMap<>();
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-      //  serializeAll();
+     serializeAll();
         deserialize();
         System.out.println("Deserialize is over");
     //    NaiveBayes.calculateTFIDFValuesOfAllCategories();
@@ -70,6 +70,11 @@ public class Main {
         out.writeObject(NaiveBayes.categoriesTFIDF);
         out.close();
         fileOut.close();
+        fileOut = new FileOutputStream("totalNumberOfWords.ser");
+        out = new ObjectOutputStream(fileOut);
+        out.writeObject(NaiveBayes.totalNumberOfWords);
+        out.close();
+        fileOut.close();
     }
 
     public static void deserialize() throws IOException, ClassNotFoundException {
@@ -96,6 +101,11 @@ public class Main {
         fileIn = new FileInputStream("category-tf-idf.ser");
         in = new ObjectInputStream(fileIn);
         NaiveBayes.categoriesTFIDF = (HashMap<String, HashMap<String, Double>>) in.readObject();
+        in.close();
+        fileIn.close();
+        fileIn = new FileInputStream("totalNumberOfWords.ser");
+        in = new ObjectInputStream(fileIn);
+        NaiveBayes.totalNumberOfWords = (HashMap<String, Double>) in.readObject();
         in.close();
         fileIn.close();
 
