@@ -35,7 +35,7 @@ public class NaiveBayes {
         return bestGuess;
     }
 
-    public static void calculateTFIDFValuesOfAllCategories() {
+    public static void  calculateTFIDFValuesOfAllCategories() {
 
         for (String category : categoriesToDocs.keySet()) {
             HashMap<String, Double> tfIdf = new HashMap<>();

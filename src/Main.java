@@ -11,11 +11,11 @@ public class Main {
     public static HashMap<String, ArrayList<Document>> categoriesToDocs = new HashMap<>();
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-       // serializeAll();
+      //  serializeAll();
         deserialize();
         System.out.println("Deserialize is over");
-        NaiveBayes.calculateTFIDFValuesOfAllCategories();
-        System.out.println("Bayes calculate is over");
+    //    NaiveBayes.calculateTFIDFValuesOfAllCategories();
+      //  System.out.println("Bayes calculate is over");
         int total = 0;
         int win = 0;
         for (int id : documents.keySet()) {
@@ -25,19 +25,23 @@ public class Main {
             if (current.getCategories().contains(winner)) {
                 win++;
             }
-            System.out.println(winner + " - " + current.getCategories().toString());
-            if (total == 250) {
-                System.out.println((double)win/(double)total);
-                System.out.println();
-            }
+            System.out.println(winner + " - " + current.getCategories().toString() + "=" + win + "/" + total);
         }
+        System.out.println((double)win/(double)total);
+        System.out.println();
     }
 
     public static void serializeAll() throws IOException {
         readFiles();
+        System.out.println("a");
         calculateAndAssigntfidf();
+        System.out.println("a");
         findClassDocuments();
+        System.out.println("a");
+        NaiveBayes.calculateTFIDFValuesOfAllCategories();
+        System.out.println("a");
         //Rocchio.calculateAllCentroids();
+        System.out.println("a");
         serialize();
     }
     public static void serialize() throws IOException {
@@ -61,6 +65,11 @@ public class Main {
         out.writeObject(categoriesToDocs);
         out.close();
         fileOut.close();
+        fileOut = new FileOutputStream("category-tf-idf.ser");
+        out = new ObjectOutputStream(fileOut);
+        out.writeObject(NaiveBayes.categoriesTFIDF);
+        out.close();
+        fileOut.close();
     }
 
     public static void deserialize() throws IOException, ClassNotFoundException {
@@ -82,6 +91,11 @@ public class Main {
         fileIn = new FileInputStream("categories-docs.ser");
         in = new ObjectInputStream(fileIn);
         categoriesToDocs = (HashMap<String, ArrayList<Document>>) in.readObject();
+        in.close();
+        fileIn.close();
+        fileIn = new FileInputStream("category-tf-idf.ser");
+        in = new ObjectInputStream(fileIn);
+        NaiveBayes.categoriesTFIDF = (HashMap<String, HashMap<String, Double>>) in.readObject();
         in.close();
         fileIn.close();
 
