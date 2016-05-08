@@ -1,12 +1,11 @@
-import javax.print.Doc;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by Erdem on 5/7/2016.
  */
+@SuppressWarnings("Duplicates")
 public class Neural_Network {
     public static HashMap<Integer, Document> documents = Main.documents;
     public static HashMap<String, Double> vocabulary = Main.vocabulary;
