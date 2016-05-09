@@ -31,20 +31,14 @@ public class Neural_Network {
         return guessedCategory;
     }
 
-    public static void train() {
+    public static void train(int times) {
         initialize();
         ArrayList keys = new ArrayList(documents.keySet());
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < times; i++) {
             Collections.shuffle(keys);
             improve(keys);
-            System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-            System.out.println(i);
-            if (i == 10){
-                System.out.println("10 oldu");
-            }
+            System.out.println(i +" times completed");
         }
-        System.out.println("done");
-
     }
 
     private static void improve(ArrayList<Integer> keys) {

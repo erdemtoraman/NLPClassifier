@@ -24,11 +24,10 @@ public class Main {
         fileIn.close();
         /*
         deserialize();
-        Neural_Network.neuralNetwork.clear();
-        System.out.println("Deserialize is over");
-        Neural_Network.train();
+       Neural_Network.neuralNetwork.clear();
+       Neural_Network.train(101);
         serializeAll();
-
+        System.out.println("Deserialize is over");
         //    NaiveBayes.calculateTFIDFValuesOfAllCategories();
         //  System.out.println("Bayes calculate is over");
         int total = 0;
@@ -53,9 +52,9 @@ public class Main {
     public static void serializeAll() throws IOException {
         readFiles();
         System.out.println("a");
-        calculateAndAssigntfidf();
+        //calculateAndAssigntfidf();
         System.out.println("b");
-        findClassDocuments();
+        //findClassDocuments();
         System.out.println("c");
         // NaiveBayes.calculateTFIDFValuesOfAllCategories();
         //Rocchio.calculateAllCentroids();
