@@ -12,6 +12,17 @@ public class Main {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
       // serializeAll();
+        FileInputStream fileIn = new FileInputStream("tf-idf.ser");
+        ObjectInputStream in = new ObjectInputStream(fileIn);
+        documents = (HashMap<Integer, Document>) in.readObject();
+        fileIn = new FileInputStream("vocabulary.ser");
+        in = new ObjectInputStream(fileIn);
+        vocabulary = (HashMap<String, Double>) in.readObject();
+        in.close();
+        fileIn.close();
+        in.close();
+        fileIn.close();
+        /*
         deserialize();
         Neural_Network.neuralNetwork.clear();
         System.out.println("Deserialize is over");
@@ -33,6 +44,10 @@ public class Main {
         }
         System.out.println((double) win / (double) total);
         System.out.println();
+        */
+
+        // http://davidsoergel.com/jenkins/job/jlibsvm/lastStableBuild/edu.berkeley.compbio$jlibsvm/ burdaki distrubition.tar.gz indir
+        SVM svm = new SVM();
     }
 
     public static void serializeAll() throws IOException {
