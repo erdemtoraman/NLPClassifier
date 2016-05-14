@@ -11,55 +11,60 @@ public class Main {
     public static HashMap<String, ArrayList<Document>> categoriesToDocs = new HashMap<>();
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-      // serializeAll();
-        FileInputStream fileIn = new FileInputStream("tf-idf.ser");
-        ObjectInputStream in = new ObjectInputStream(fileIn);
-        documents = (HashMap<Integer, Document>) in.readObject();
-        fileIn = new FileInputStream("vocabulary.ser");
-        in = new ObjectInputStream(fileIn);
-        vocabulary = (HashMap<String, Double>) in.readObject();
-        in.close();
-        fileIn.close();
-        in.close();
-        fileIn.close();
-        /*
+       //serializeAll();
         deserialize();
-       Neural_Network.neuralNetwork.clear();
-       Neural_Network.train(101);
-        serializeAll();
         System.out.println("Deserialize is over");
-        //    NaiveBayes.calculateTFIDFValuesOfAllCategories();
-        //  System.out.println("Bayes calculate is over");
+
         int total = 0;
         int win = 0;
+        long start = System.currentTimeMillis();
         for (int id : documents.keySet()) {
             total++;
             Document current = documents.get(id);
-            String winner = Neural_Network.guess(current);
+            String winner = NaiveBayes.guess(current);
             if (current.getCategories().contains(winner)) {
                 win++;
             }
-            System.out.println(winner + " - " + current.getCategories().toString() + "=" + win + "/" + total);
         }
+        long end = System.currentTimeMillis();
+        System.out.println("NAIVE TOTALDE 23K elemanda "+ (end-start));
         System.out.println((double) win / (double) total);
         System.out.println();
-        */
 
-        // http://davidsoergel.com/jenkins/job/jlibsvm/lastStableBuild/edu.berkeley.compbio$jlibsvm/ burdaki distrubition.tar.gz indir
-        SVM svm = new SVM();
+
+     //
+        //   SVM svm = new SVM();
     }
 
     public static void serializeAll() throws IOException {
+
+       long start = System.currentTimeMillis();
         readFiles();
-        System.out.println("a");
-        //calculateAndAssigntfidf();
-        System.out.println("b");
-        //findClassDocuments();
-        System.out.println("c");
-        // NaiveBayes.calculateTFIDFValuesOfAllCategories();
-        //Rocchio.calculateAllCentroids();
-      //  Neural_Network.train();
-        System.out.println("d");
+        long end = System.currentTimeMillis();
+        System.out.println("Reading files took: "+ (end-start));
+
+        start = System.currentTimeMillis();
+        calculateAndAssigntfidf();
+        end = System.currentTimeMillis();
+        System.out.println("CalculateTf-idfValues: "+ (end-start));
+
+        start = System.currentTimeMillis();
+        findClassDocuments();
+        end = System.currentTimeMillis();
+        System.out.println("findClassDocs: "+ (end-start));
+
+        start = System.currentTimeMillis();
+         NaiveBayes.calculateTFIDFValuesOfAllCategories();
+        end = System.currentTimeMillis();
+        System.out.println("NaiveBayes training: "+ (end-start));
+        start = System.currentTimeMillis();
+        Rocchio.calculateAllCentroids();
+        end = System.currentTimeMillis();
+        System.out.println("Rocchio training: "+ (end-start));
+        start = System.currentTimeMillis();
+        Neural_Network.train(50);
+        end = System.currentTimeMillis();
+        System.out.println("Neural training: "+ (end-start));
         serialize();
 
     }

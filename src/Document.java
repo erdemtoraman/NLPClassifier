@@ -17,6 +17,17 @@ public class Document implements Serializable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Document)) return false;
+
+        Document document = (Document) o;
+
+        return getId() == document.getId();
+
+    }
+
+    @Override
     public String toString() {
         return "id=" + id +
                 ", tfidfVector = " + tfidfVector +
